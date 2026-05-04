@@ -1,0 +1,13 @@
+[
+  {
+    "id": "empresa1",
+    "nome": "Nome da Empresa",
+    "server": "IP_DO_SQL_SERVER",
+    "database": "nome_do_banco",
+    "uid": "sa",
+    "pwd": "senha",
+    "pasta_xml_s1210": "C:\\caminho\\para\\xmls\\s1210",
+    "pasta_xml_s1200": "C:\\caminho\\para\\xmls\\s1200",
+    "pasta_informes": "C:\\caminho\\para\\pdfs"
+  }
+]

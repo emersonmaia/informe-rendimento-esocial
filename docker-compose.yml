@@ -1,0 +1,18 @@
+services:
+  app:
+    build: .
+    image: informe-rendimento:latest
+    container_name: informe-rendimento
+    restart: unless-stopped
+    ports:
+      - "9000:9000"
+    volumes:
+      # Configuração dos bancos (com senhas) — editar antes de subir
+      - ./connections.json:/app/connections.json
+
+      # Pastas de XMLs e PDFs — ajustar os caminhos do lado esquerdo (:)
+      # conforme onde os arquivos estão no servidor
+      - C:\brven:/brven
+      - D:\agronil_informe_rendimento_com_esocial:/agronil
+    environment:
+      - PYTHONUNBUFFERED=1

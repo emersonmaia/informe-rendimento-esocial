@@ -1,0 +1,28 @@
+# Dependências
+frontend/node_modules/
+__pycache__/
+*.pyc
+*.pyo
+.env
+
+# Build (gerado pelo start_servidor.bat / setup.bat)
+frontend/dist/
+
+# Configuração local com senhas — NUNCA commitar
+connections.json
+
+# Arquivos de diagnóstico temporários
+diagnostico_*.py
+verificar_*.py
+
+# PDFs gerados
+*.pdf
+
+# Dados de importação temporários
+DADOS_SQL_IMPORT/
+
+# Editor / OS
+.vscode/
+.idea/
+Thumbs.db
+desktop.ini
