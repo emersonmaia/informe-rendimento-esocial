@@ -12,6 +12,8 @@ services:
 
       # Pastas de XMLs e PDFs — ajustar os caminhos do lado esquerdo (:)
       # conforme onde os arquivos estão no servidor
+      # Exemplo Windows:  - C:\brven:/brven
+      # Exemplo Linux:    - /dados/brven:/brven
       - C:\brven:/brven
       - D:\agronil_informe_rendimento_com_esocial:/agronil
     environment:
