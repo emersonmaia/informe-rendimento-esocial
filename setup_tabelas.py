@@ -4,10 +4,12 @@ Auto-detecta a collation do FOLFUN e aplica nas colunas texto das tabelas eSocia
 evitando conflito de agrupamento (erro 468) nos JOINs.
 """
 import pyodbc
-
+""""
 SERVER = '100.110.194.113'
-UID    = 'sa'
-PWD    = 'mult'
+"""
+SERVER = '100.110.194.113'
+UID = 'sa'
+PWD = 'mult'
 
 CONFIGS = {
     'folha_agronil': {
@@ -46,6 +48,23 @@ COLUNAS_TEXTO = [
     ('ESOCIAL_S1210',         'DT_PAGTO',     'VARCHAR(20)',  'NULL'),
     ('ESOCIAL_S1210',         'COD_RECEITA',  'VARCHAR(20)',  'NULL'),
     ('ESOCIAL_S1210',         'ARQUIVO',      'VARCHAR(260)', 'NOT NULL'),
+    ('ESOCIAL_S1210_DETALHE', 'CPF',          'VARCHAR(20)',  'NOT NULL'),
+    ('ESOCIAL_S1210_DETALHE', 'EMPRESA',      'VARCHAR(100)', 'NOT NULL'),
+    ('ESOCIAL_S1210_DETALHE', 'COMPETENCIA',  'VARCHAR(10)',  'NOT NULL'),
+    ('ESOCIAL_S1210_DETALHE', 'DT_PAGTO',     'VARCHAR(20)',  'NULL'),
+    ('ESOCIAL_S1210_DETALHE', 'PER_REF',      'VARCHAR(10)',  'NULL'),
+    ('ESOCIAL_S1210_DETALHE', 'IDE_DMDEV',    'VARCHAR(40)',  'NULL'),
+    ('ESOCIAL_S1210_DETALHE', 'TP_PGTO',      'VARCHAR(10)',  'NULL'),
+    ('ESOCIAL_S1210_DETALHE', 'COD_RECEITA',  'VARCHAR(20)',  'NULL'),
+    ('ESOCIAL_S1210_DETALHE', 'ARQUIVO',      'VARCHAR(260)', 'NOT NULL'),
+    ('ESOCIAL_S1210_DETALHE', 'TIPO_XML',     'VARCHAR(30)',  'NOT NULL'),
+    ('ESOCIAL_S1210_DETALHE', 'NR_RECIBO',    'VARCHAR(80)',  'NULL'),
+    ('ESOCIAL_S1210_DETALHE', 'NR_REC_ARQ',   'VARCHAR(80)',  'NULL'),
+    ('ESOCIAL_INFORME_AJUSTE_MANUAL', 'CPF',          'VARCHAR(20)',  'NOT NULL'),
+    ('ESOCIAL_INFORME_AJUSTE_MANUAL', 'COMPETENCIA',  'VARCHAR(10)',  'NOT NULL'),
+    ('ESOCIAL_INFORME_AJUSTE_MANUAL', 'DT_PAGTO',     'VARCHAR(20)',  'NOT NULL'),
+    ('ESOCIAL_INFORME_AJUSTE_MANUAL', 'COD_RECEITA',  'VARCHAR(20)',  'NULL'),
+    ('ESOCIAL_INFORME_AJUSTE_MANUAL', 'OBS',          'VARCHAR(300)', 'NULL'),
     ('ESOCIAL_S1210_COMPL',   'CPF',          'VARCHAR(20)',  'NOT NULL'),
     ('ESOCIAL_S1210_COMPL',   'COMPETENCIA',  'VARCHAR(10)',  'NOT NULL'),
     ('ESOCIAL_S1210_COMPL',   'DT_PAGTO',     'VARCHAR(20)',  'NULL'),
@@ -131,6 +150,47 @@ def build_ddl(col):
             INSS_13      DECIMAL(18,2) NOT NULL DEFAULT 0,
             IRRF_13      DECIMAL(18,2) NOT NULL DEFAULT 0,
             ARQUIVO      VARCHAR(260)  COLLATE {col} NOT NULL
+        )
+        """,
+        f"""
+        IF NOT EXISTS (SELECT 1 FROM sys.tables WHERE name='ESOCIAL_S1210_DETALHE')
+        CREATE TABLE ESOCIAL_S1210_DETALHE (
+            ID           INT IDENTITY(1,1) PRIMARY KEY,
+            CPF          VARCHAR(20)   COLLATE {col} NOT NULL,
+            EMPRESA      VARCHAR(100)  COLLATE {col} NOT NULL,
+            COMPETENCIA  VARCHAR(10)   COLLATE {col} NOT NULL,
+            DT_PAGTO     VARCHAR(20)   COLLATE {col} NULL,
+            PER_REF      VARCHAR(10)   COLLATE {col} NULL,
+            IDE_DMDEV    VARCHAR(40)   COLLATE {col} NULL,
+            TP_PGTO      VARCHAR(10)   COLLATE {col} NULL,
+            VR_LIQ       DECIMAL(18,2) NOT NULL DEFAULT 0,
+            REND_TRIB    DECIMAL(18,2) NOT NULL DEFAULT 0,
+            INSS         DECIMAL(18,2) NOT NULL DEFAULT 0,
+            IRRF         DECIMAL(18,2) NOT NULL DEFAULT 0,
+            COD_RECEITA  VARCHAR(20)   COLLATE {col} NULL,
+            ARQUIVO      VARCHAR(260)  COLLATE {col} NOT NULL,
+            TIPO_XML     VARCHAR(30)   COLLATE {col} NOT NULL,
+            NR_RECIBO    VARCHAR(80)   COLLATE {col} NULL,
+            NR_REC_ARQ   VARCHAR(80)   COLLATE {col} NULL
+        )
+        """,
+        f"""
+        IF NOT EXISTS (SELECT 1 FROM sys.tables WHERE name='ESOCIAL_INFORME_AJUSTE_MANUAL')
+        CREATE TABLE ESOCIAL_INFORME_AJUSTE_MANUAL (
+            ID           INT IDENTITY(1,1) PRIMARY KEY,
+            CPF          VARCHAR(20)   COLLATE {col} NOT NULL,
+            EMPRESA      INT           NULL,
+            COMPETENCIA  VARCHAR(10)   COLLATE {col} NOT NULL,
+            DT_PAGTO     VARCHAR(20)   COLLATE {col} NOT NULL,
+            REND_TRIB    DECIMAL(18,2) NOT NULL DEFAULT 0,
+            INSS         DECIMAL(18,2) NOT NULL DEFAULT 0,
+            IRRF         DECIMAL(18,2) NOT NULL DEFAULT 0,
+            REND_TRIB_13 DECIMAL(18,2) NOT NULL DEFAULT 0,
+            INSS_13      DECIMAL(18,2) NOT NULL DEFAULT 0,
+            IRRF_13      DECIMAL(18,2) NOT NULL DEFAULT 0,
+            COD_RECEITA  VARCHAR(20)   COLLATE {col} NULL,
+            OBS          VARCHAR(300)  COLLATE {col} NULL,
+            CRIADO_EM    DATETIME      NOT NULL DEFAULT GETDATE()
         )
         """,
         f"""
@@ -246,7 +306,8 @@ def corrigir_collation(cursor, collation):
             if is_pk:
                 pk = _pk_name(cursor, tabela)
                 if pk:
-                    cursor.execute(f"ALTER TABLE {tabela} DROP CONSTRAINT [{pk}]")
+                    cursor.execute(
+                        f"ALTER TABLE {tabela} DROP CONSTRAINT [{pk}]")
                 cursor.execute(
                     f"ALTER TABLE {tabela} ALTER COLUMN {coluna} {tipo} COLLATE {collation} {nulidade}"
                 )
@@ -274,7 +335,7 @@ def upsert_config(cursor, chave, valor):
 def processar_banco(banco, cfg):
     print(f"\n  [{banco}]")
     try:
-        conn   = get_conn(banco)
+        conn = get_conn(banco)
         cursor = conn.cursor()
 
         collation = detectar_collation(cursor)

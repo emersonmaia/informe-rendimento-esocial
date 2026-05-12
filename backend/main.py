@@ -9,7 +9,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
 
-from .routers import dashboard, importacao, informes, configuracao, conferencia, conferencia_folha, irpf, nomes
+from .routers import dashboard, importacao, informes, configuracao, conferencia, conferencia_folha, irpf, nomes, ajustes_manuais, pendencias_esocial, excluir
 
 app = FastAPI(
     title="Agronil — Informe de Rendimento",
@@ -33,6 +33,9 @@ app.include_router(conferencia.router,       prefix="/api/conferencia",        t
 app.include_router(conferencia_folha.router, prefix="/api/conferencia-folha",   tags=["Conferência Folha"])
 app.include_router(irpf.router,         prefix="/api/irpf",         tags=["IRPF"])
 app.include_router(nomes.router,        prefix="/api/nomes",         tags=["Nomes Override"])
+app.include_router(ajustes_manuais.router,    prefix="/api/ajustes-manuais",    tags=["Ajustes Manuais"])
+app.include_router(pendencias_esocial.router, prefix="/api/pendencias-esocial", tags=["Pendências eSocial"])
+app.include_router(excluir.router,            prefix="/api/excluir",           tags=["Exclusão de Linhas"])
 
 
 @app.get("/api/health", tags=["Sistema"])

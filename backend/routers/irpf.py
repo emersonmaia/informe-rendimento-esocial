@@ -16,9 +16,9 @@ def get_totais_cpf(cpf: str):
     cur = conn.cursor()
     cur.execute("""
         SELECT
-            SUM(REND_TRIB)    AS rend_trib,
-            SUM(INSS)         AS inss,
-            SUM(IRRF)         AS irrf,
+            SUM(CASE WHEN REND_TRIB_13 > 0 THEN 0 ELSE REND_TRIB END) AS rend_trib,
+            SUM(CASE WHEN REND_TRIB_13 > 0 THEN 0 ELSE INSS END)      AS inss,
+            SUM(CASE WHEN REND_TRIB_13 > 0 THEN 0 ELSE IRRF END)      AS irrf,
             SUM(REND_TRIB_13) AS rend_trib_13,
             SUM(INSS_13)      AS inss_13,
             SUM(IRRF_13)      AS irrf_13
@@ -27,15 +27,17 @@ def get_totais_cpf(cpf: str):
             FROM ESOCIAL_S1210
             WHERE TRY_CAST(DT_PAGTO AS DATE) IS NOT NULL
               AND YEAR(TRY_CAST(DT_PAGTO AS DATE)) = ?
-              AND (REND_TRIB > 0 OR REND_TRIB_13 > 0)
+              AND (REND_TRIB > 0 OR REND_TRIB_13 > 0 OR INSS > 0 OR INSS_13 > 0)
               AND RIGHT('00000000000' + LTRIM(RTRIM(CPF)), 11) = ?
+              AND ID NOT IN (SELECT ROW_ID FROM ESOCIAL_S1210_EXCLUIR WHERE TABELA='S1210')
             UNION ALL
             SELECT REND_TRIB, INSS, IRRF, REND_TRIB_13, INSS_13, IRRF_13
             FROM ESOCIAL_S1210_COMPL
             WHERE TRY_CAST(DT_PAGTO AS DATE) IS NOT NULL
               AND YEAR(TRY_CAST(DT_PAGTO AS DATE)) = ?
-              AND (REND_TRIB > 0 OR REND_TRIB_13 > 0)
+              AND (REND_TRIB > 0 OR REND_TRIB_13 > 0 OR INSS > 0 OR INSS_13 > 0)
               AND RIGHT('00000000000' + LTRIM(RTRIM(CPF)), 11) = ?
+              AND ID NOT IN (SELECT ROW_ID FROM ESOCIAL_S1210_EXCLUIR WHERE TABELA='COMPL')
         ) x
     """, ANO_CAL, cpf_clean, ANO_CAL, cpf_clean)
 

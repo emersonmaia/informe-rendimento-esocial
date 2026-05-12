@@ -26,6 +26,15 @@ def listar_overrides():
     except Exception as e:
         raise HTTPException(status_code=503, detail=f"Sem conexão: {e}")
     cur = conn.cursor()
+    cur.execute("""
+        IF NOT EXISTS (SELECT 1 FROM sys.tables WHERE name='ESOCIAL_NOME_OVERRIDE')
+        CREATE TABLE ESOCIAL_NOME_OVERRIDE (
+            CPF  VARCHAR(11) NOT NULL PRIMARY KEY,
+            NOME VARCHAR(200) NOT NULL,
+            OBS  VARCHAR(300) NULL
+        )
+    """)
+    conn.commit()
     cur.execute("SELECT CPF, NOME, OBS FROM ESOCIAL_NOME_OVERRIDE ORDER BY NOME")
     rows = cur.fetchall()
     conn.close()

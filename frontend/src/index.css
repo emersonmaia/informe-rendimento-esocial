@@ -1,2 +1,5 @@
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+
+.row-excluida td { background: #fafafa !important; text-decoration: line-through; }
+.row-nao-identificado td { background: #fff2f0 !important; }

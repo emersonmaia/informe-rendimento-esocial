@@ -7,7 +7,7 @@ import {
   SearchOutlined, CloudDownloadOutlined,
   CheckCircleOutlined, SyncOutlined, CloseCircleOutlined, DeleteOutlined,
 } from '@ant-design/icons'
-import { verificarXmls, importarS1210, importarS1200, getJobImport, listarJobs, limparDados } from '../api'
+import { verificarXmls, importarS1210, importarS1200, importarS2299, getJobImport, listarJobs, limparDados } from '../api'
 
 const { Title, Text, Paragraph } = Typography
 
@@ -70,6 +70,10 @@ export default function Importacao() {
 
   const handleImportarS1200 = () => {
     importarS1200().then(r => iniciarPolling(r.data.job_id))
+  }
+
+  const handleImportarS2299 = () => {
+    importarS2299().then(r => iniciarPolling(r.data.job_id))
   }
 
   const handleLimpar = () => {
@@ -178,6 +182,13 @@ export default function Importacao() {
             disabled={isRunning}
           >
             Importar S-1200 Complementar
+          </Button>
+          <Button
+            icon={<CloudDownloadOutlined />}
+            onClick={handleImportarS2299}
+            disabled={isRunning}
+          >
+            Importar Rescisões S-2299
           </Button>
           {isRunning && <Spin tip="Importando..." />}
         </Space>

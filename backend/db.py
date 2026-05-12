@@ -101,3 +101,7 @@ def get_pasta_xml_s1200() -> str:
 
 def get_pasta_informes() -> str:
     return get_active().get("pasta_informes", "")
+
+
+def get_periodos_s1200() -> dict:
+    return get_active().get("periodos_s1200", {})

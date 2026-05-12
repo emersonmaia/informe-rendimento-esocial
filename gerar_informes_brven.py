@@ -52,12 +52,14 @@ def buscar_dados(banco):
             WHERE TRY_CAST(DT_PAGTO AS DATE) IS NOT NULL
               AND YEAR(TRY_CAST(DT_PAGTO AS DATE)) = ?
               AND (REND_TRIB > 0 OR REND_TRIB_13 > 0)
+              AND ID NOT IN (SELECT ROW_ID FROM ESOCIAL_S1210_EXCLUIR WHERE TABELA='S1210')
             UNION ALL
             SELECT CPF, DT_PAGTO, REND_TRIB, INSS, IRRF, REND_TRIB_13, INSS_13, IRRF_13
             FROM ESOCIAL_S1210_COMPL
             WHERE TRY_CAST(DT_PAGTO AS DATE) IS NOT NULL
               AND YEAR(TRY_CAST(DT_PAGTO AS DATE)) = ?
               AND (REND_TRIB > 0 OR REND_TRIB_13 > 0)
+              AND ID NOT IN (SELECT ROW_ID FROM ESOCIAL_S1210_EXCLUIR WHERE TABELA='COMPL')
         )
         SELECT
             ISNULL(f.NOME, ISNULL(ov.NOME, 'NAO IDENTIFICADO')) AS NOME_FUNC,
@@ -70,12 +72,9 @@ def buscar_dados(banco):
             ISNULL(CAST(e.CIDADE  AS VARCHAR(100)), '')           AS CIDADE,
             ISNULL(CAST(e.ESTADO  AS VARCHAR(10)),  '')           AS ESTADO,
             CAST(f.EMPRESA AS VARCHAR(10))                        AS COD_EMPRESA,
-            SUM(CASE WHEN s.REND_TRIB_13 > 0 AND ABS(s.REND_TRIB - s.REND_TRIB_13) < 0.02
-                     THEN 0 ELSE s.REND_TRIB END)                 AS REND_TRIB,
-            SUM(CASE WHEN s.REND_TRIB_13 > 0 AND ABS(s.REND_TRIB - s.REND_TRIB_13) < 0.02
-                     THEN 0 ELSE s.INSS END)                      AS INSS,
-            SUM(CASE WHEN s.REND_TRIB_13 > 0 AND ABS(s.REND_TRIB - s.REND_TRIB_13) < 0.02
-                     THEN 0 ELSE s.IRRF END)                      AS IRRF,
+            SUM(CASE WHEN s.REND_TRIB_13 > 0 THEN 0 ELSE s.REND_TRIB END) AS REND_TRIB,
+            SUM(CASE WHEN s.REND_TRIB_13 > 0 THEN 0 ELSE s.INSS END)     AS INSS,
+            SUM(CASE WHEN s.REND_TRIB_13 > 0 THEN 0 ELSE s.IRRF END)     AS IRRF,
             SUM(s.REND_TRIB_13)                                   AS REND_TRIB_13,
             SUM(s.INSS_13)                                        AS INSS_13,
             SUM(s.IRRF_13)                                        AS IRRF_13,

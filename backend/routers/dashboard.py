@@ -27,13 +27,13 @@ def _query_dashboard(conn):
             FROM ESOCIAL_S1210
             WHERE TRY_CAST(DT_PAGTO AS DATE) IS NOT NULL
               AND YEAR(TRY_CAST(DT_PAGTO AS DATE)) = ?
-              AND (REND_TRIB > 0 OR REND_TRIB_13 > 0)
+              AND (REND_TRIB > 0 OR REND_TRIB_13 > 0 OR INSS > 0 OR INSS_13 > 0)
             UNION ALL
             SELECT CPF, REND_TRIB, INSS, IRRF, REND_TRIB_13, INSS_13, IRRF_13
             FROM ESOCIAL_S1210_COMPL
             WHERE TRY_CAST(DT_PAGTO AS DATE) IS NOT NULL
               AND YEAR(TRY_CAST(DT_PAGTO AS DATE)) = ?
-              AND (REND_TRIB > 0 OR REND_TRIB_13 > 0)
+              AND (REND_TRIB > 0 OR REND_TRIB_13 > 0 OR INSS > 0 OR INSS_13 > 0)
         )
         SELECT
             COUNT(DISTINCT CPF)  AS beneficiarios,

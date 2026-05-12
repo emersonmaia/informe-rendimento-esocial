@@ -8,7 +8,7 @@ import {
   ReloadOutlined, QuestionCircleOutlined,
 } from '@ant-design/icons'
 import dayjs from 'dayjs'
-import { getConferenciaFolha } from '../api'
+import { getConferenciaFolha, getDashboard } from '../api'
 
 const { Title, Text } = Typography
 const { Search } = Input
@@ -48,9 +48,7 @@ const corLinha = (r) => {
 }
 
 export default function ConferenciaFolha() {
-  // Default: pagamento do mês anterior ao atual
-  const hoje = dayjs()
-  const [periodo, setPeriodo] = useState(hoje.subtract(1, 'month'))
+  const [periodo, setPeriodo] = useState(null)
   const [dados, setDados]     = useState([])
   const [filtrado, setFiltrado] = useState([])
   const [loading, setLoading]   = useState(false)
@@ -59,10 +57,10 @@ export default function ConferenciaFolha() {
   const [busca, setBusca]       = useState('')
 
   const carregar = (p) => {
-    const target = p || periodo
+    if (!p) return
     setLoading(true)
     setErro(null)
-    getConferenciaFolha(target.year(), target.month() + 1)
+    getConferenciaFolha(p.year(), p.month() + 1)
       .then(r => {
         setDados(r.data)
         aplicarFiltros(r.data, filtro, busca)
@@ -71,7 +69,20 @@ export default function ConferenciaFolha() {
       .finally(() => setLoading(false))
   }
 
-  useEffect(() => { carregar() }, [])
+  useEffect(() => {
+    getDashboard()
+      .then(r => {
+        const anoCal = r.data.ano_cal || dayjs().year() - 1
+        const def = dayjs(`${anoCal}-11-01`)
+        setPeriodo(def)
+        carregar(def)
+      })
+      .catch(() => {
+        const def = dayjs().subtract(1, 'year').month(10)
+        setPeriodo(def)
+        carregar(def)
+      })
+  }, [])
 
   const aplicarFiltros = (base, f, q) => {
     let arr = base
@@ -102,9 +113,8 @@ export default function ConferenciaFolha() {
   const nDiv         = dados.filter(r => r.status === 'DIVERGENTE').length
   const nSemEsocial  = dados.filter(r => r.status === 'SEM_ESOCIAL').length
 
-  const mesComp = periodo.subtract(1, 'month')
-  const labelPgto = periodo.format('MM/YYYY')
-  const labelComp = mesComp.format('MM/YYYY')
+  const labelComp  = periodo.format('MM/YYYY')
+  const labelPagto = periodo.add(1, 'month').format('MM/YYYY')
 
   const colunas = [
     {
@@ -130,13 +140,36 @@ export default function ConferenciaFolha() {
       title: 'Dt Pagto', dataIndex: 'data_pgto', key: 'pgto', width: 105, align: 'center',
     },
     {
-      title: <Tooltip title="INSS na folha de pagamento">Folha INSS</Tooltip>,
+      title: 'Origem',
+      dataIndex: 'es_origem', key: 'orig', width: 90, align: 'center',
+      render: v => v
+        ? <Tag color={v === 'S1210' ? 'blue' : 'purple'}>{v}</Tag>
+        : <Text type="secondary">—</Text>,
+      filters: [
+        { text: 'S1210', value: 'S1210' },
+        { text: 'S1200', value: 'S1200' },
+        { text: 'Sem eSocial', value: '' },
+      ],
+      onFilter: (v, r) => (r.es_origem || '') === v,
+    },
+    {
+      title: <Tooltip title="Quantidade de eventos S-1210/S-1200 no eSocial para este CPF e competência. Valor > 1 indica possível duplicata ou retificação.">Ev.</Tooltip>,
+      dataIndex: 'es_qtd_eventos', key: 'ev', width: 55, align: 'center',
+      render: v => v > 1
+        ? <Tag color="orange">{v}</Tag>
+        : v === 1
+          ? <Text type="secondary">{v}</Text>
+          : <Text type="secondary">—</Text>,
+      sorter: (a, b) => b.es_qtd_eventos - a.es_qtd_eventos,
+    },
+    {
+      title: <Tooltip title="INSS na folha de pagamento (FOLTOT)">Folha INSS</Tooltip>,
       dataIndex: 'folha_inss', key: 'fi', width: 110, align: 'right',
       sorter: (a, b) => a.folha_inss - b.folha_inss,
       render: v => <Text style={{ fontFamily: 'monospace' }}>R$ {fmt(v)}</Text>,
     },
     {
-      title: <Tooltip title="INSS retornado pelo eSocial (S-5002)">eSocial INSS</Tooltip>,
+      title: <Tooltip title="INSS retornado pelo eSocial (S-1210 ou S-1200)">eSocial INSS</Tooltip>,
       dataIndex: 'es_inss', key: 'ei', width: 110, align: 'right',
       render: v => <Text style={{ fontFamily: 'monospace' }}>R$ {fmt(v)}</Text>,
     },
@@ -151,7 +184,7 @@ export default function ConferenciaFolha() {
       render: v => <Text style={{ fontFamily: 'monospace', color: '#cf1322' }}>R$ {fmt(v)}</Text>,
     },
     {
-      title: <Tooltip title="IRRF retornado pelo eSocial (S-5002)">eSocial IRRF</Tooltip>,
+      title: <Tooltip title="IRRF retornado pelo eSocial (S-1210 ou S-1200)">eSocial IRRF</Tooltip>,
       dataIndex: 'es_irrf', key: 'er', width: 110, align: 'right',
       render: v => <Text style={{ fontFamily: 'monospace', color: '#cf1322' }}>R$ {fmt(v)}</Text>,
     },
@@ -174,11 +207,11 @@ export default function ConferenciaFolha() {
   return (
     <div style={{ padding: 24 }}>
       <Title level={4} style={{ marginBottom: 4 }}>
-        Conferência Folha vs eSocial — Pagamentos {labelPgto}
+        Conferência Folha vs eSocial — Competência {labelComp}
       </Title>
       <Text type="secondary" style={{ display: 'block', marginBottom: 16 }}>
-        Competência <b>{labelComp}</b> · Compara INSS e IRRF da folha (FOLTOT/FOLEVE)
-        com o retorno do eSocial (S-5002).
+        Folha competência <b>{labelComp}</b> · Pagamento em <b>{labelPagto}</b> ·
+        eSocial buscado pelo mês do pagamento (regime de caixa do IRRF).
       </Text>
 
       {/* Resumo */}
@@ -289,26 +322,26 @@ export default function ConferenciaFolha() {
           rowClassName={corLinha}
           summary={() => (
             <Table.Summary.Row style={{ fontWeight: 600, background: '#fafafa' }}>
-              <Table.Summary.Cell index={0} colSpan={5}>Total da página</Table.Summary.Cell>
-              <Table.Summary.Cell index={5} align="right">
+              <Table.Summary.Cell index={0} colSpan={7}>Total da página</Table.Summary.Cell>
+              <Table.Summary.Cell index={7} align="right">
                 <Text style={{ fontFamily: 'monospace' }}>R$ {fmt(totalFolhaInss)}</Text>
               </Table.Summary.Cell>
-              <Table.Summary.Cell index={6} align="right">
+              <Table.Summary.Cell index={8} align="right">
                 <Text style={{ fontFamily: 'monospace' }}>R$ {fmt(totalEsInss)}</Text>
               </Table.Summary.Cell>
-              <Table.Summary.Cell index={7} align="right">
+              <Table.Summary.Cell index={9} align="right">
                 {fmtDif(totalFolhaInss - totalEsInss)}
               </Table.Summary.Cell>
-              <Table.Summary.Cell index={8} align="right">
+              <Table.Summary.Cell index={10} align="right">
                 <Text style={{ fontFamily: 'monospace', color: '#cf1322' }}>R$ {fmt(totalFolhaIrrf)}</Text>
               </Table.Summary.Cell>
-              <Table.Summary.Cell index={9} align="right">
+              <Table.Summary.Cell index={11} align="right">
                 <Text style={{ fontFamily: 'monospace', color: '#cf1322' }}>R$ {fmt(totalEsIrrf)}</Text>
               </Table.Summary.Cell>
-              <Table.Summary.Cell index={10} align="right">
+              <Table.Summary.Cell index={12} align="right">
                 {fmtDif(totalFolhaIrrf - totalEsIrrf)}
               </Table.Summary.Cell>
-              <Table.Summary.Cell index={11} />
+              <Table.Summary.Cell index={13} />
             </Table.Summary.Row>
           )}
         />

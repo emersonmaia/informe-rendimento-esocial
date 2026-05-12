@@ -8,7 +8,7 @@ import {
   DashboardOutlined, CloudDownloadOutlined, FilePdfOutlined,
   AuditOutlined, FileSearchOutlined, DatabaseOutlined,
   PlusOutlined, DeleteOutlined, CheckCircleOutlined, ApiOutlined,
-  EditOutlined, UserAddOutlined,
+  EditOutlined, UserAddOutlined, ExclamationCircleOutlined,
 } from '@ant-design/icons'
 
 import Dashboard          from './pages/Dashboard'
@@ -16,7 +16,9 @@ import Importacao         from './pages/Importacao'
 import Informes           from './pages/Informes'
 import Conferencia        from './pages/Conferencia'
 import ConferenciaFolha   from './pages/ConferenciaFolha'
-import ComparacaoIRPF     from './pages/ComparacaoIRPF'
+import ComparacaoIRPF          from './pages/ComparacaoIRPF'
+import PendenciasEsocial       from './pages/PendenciasEsocial'
+import ConferenciaFuncionario  from './pages/ConferenciaFuncionario'
 import {
   getConexoes, ativarConexao, adicionarConexao,
   removerConexao, testarConexao, atualizarConexao,
@@ -30,9 +32,11 @@ const menuItems = [
   { key: '/',            icon: <DashboardOutlined />,     label: 'Dashboard' },
   { key: '/importacao',  icon: <CloudDownloadOutlined />, label: 'Importação' },
   { key: '/informes',    icon: <FilePdfOutlined />,       label: 'Informes' },
-  { key: '/conferencia',       icon: <AuditOutlined />,         label: 'Conferência' },
-  { key: '/conferencia-folha', icon: <AuditOutlined />,         label: 'Conf. Folha×eSocial' },
-  { key: '/irpf',              icon: <FileSearchOutlined />,    label: 'Comparar IRPF' },
+  { key: '/conferencia',       icon: <AuditOutlined />,              label: 'Conferência' },
+  { key: '/conferencia-folha', icon: <AuditOutlined />,              label: 'Conf. Folha×eSocial' },
+  { key: '/conferencia-func',  icon: <AuditOutlined />,              label: 'Conf. por Funcionário' },
+  { key: '/pendencias',        icon: <ExclamationCircleOutlined />,  label: 'Pendências eSocial' },
+  { key: '/irpf',              icon: <FileSearchOutlined />,         label: 'Comparar IRPF' },
 ]
 
 // ── Modal de gerenciar conexões ────────────────────────────────────────────────
@@ -352,6 +356,8 @@ function AppLayout() {
             <Route path="/informes"    element={<Informes />} />
             <Route path="/conferencia"       element={<Conferencia />} />
             <Route path="/conferencia-folha" element={<ConferenciaFolha />} />
+            <Route path="/conferencia-func"  element={<ConferenciaFuncionario />} />
+            <Route path="/pendencias"        element={<PendenciasEsocial />} />
             <Route path="/irpf"              element={<ComparacaoIRPF />} />
           </Routes>
         </Content>

@@ -1,0 +1,47 @@
+installation:
+  version: 1.2.38
+  installDate: 2026-05-12T19:53:46.678Z
+  lastUpdated: 2026-05-12T19:53:46.678Z
+
+engines:
+  - claude-code
+  - codex
+  - cursor
+  - gemini-cli
+  - antigravity
+  - kiro
+  - opencode
+  - github-copilot
+
+agents:
+  - reversa
+  - reversa-scout
+  - reversa-archaeologist
+  - reversa-detective
+  - reversa-architect
+  - reversa-writer
+  - reversa-reviewer
+  - reversa-visor
+  - reversa-data-master
+  - reversa-design-system
+  - reversa-agents-help
+  - reversa-reconstructor
+  - reversa-migrate
+  - reversa-paradigm-advisor
+  - reversa-curator
+  - reversa-strategist
+  - reversa-designer
+  - reversa-screen-translator
+  - reversa-inspector
+  - reversa-requirements
+  - reversa-clarify
+  - reversa-plan
+  - reversa-to-do
+  - reversa-audit
+  - reversa-quality
+  - reversa-coding
+  - reversa-principles
+  - reversa-resume
+  - reversa-pricing-profile
+  - reversa-pricing-size
+  - reversa-pricing-estimate
