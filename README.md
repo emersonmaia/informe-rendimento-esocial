@@ -5,6 +5,18 @@ Informes de Rendimento em PDF (IN RFB nº 2.060/2021), com suporte a múltiplas 
 
 ---
 
+# esocialconferenciairrfchatgpt
+
+Este repositório permite importar XMLs do eSocial e gerar Informes de Rendimento em PDF.
+
+## Como rodar
+
+Veja os scripts `deploy_manual_windows.bat` e `deploy_manual_linux.sh` para deploy manual.
+
+## Deploy via Docker
+
+Consulte as instruções abaixo ou o arquivo original para detalhes completos.
+
 ## Instalação com Docker (recomendado)
 
 > Não precisa instalar Python, Node.js nem ODBC Driver. Só precisa do Docker.
@@ -53,8 +65,8 @@ Edite `docker-compose.yml` e aponte os caminhos das pastas de XML/PDF do servido
 ```yaml
 volumes:
   - ./connections.json:/app/connections.json
-  - C:\brven:/brven          # ajuste para o caminho real no servidor
-  - D:\dados:/agronil        # ajuste para o caminho real no servidor
+  - C:\brven:/brven # ajuste para o caminho real no servidor
+  - D:\dados:/agronil # ajuste para o caminho real no servidor
 ```
 
 ### 5. Suba o container

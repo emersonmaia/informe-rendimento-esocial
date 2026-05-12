@@ -8,9 +8,9 @@
 
 ## Fase 1: Reconhecimento 🔍
 
-- [ ] **Scout** — Mapeamento de estrutura de pastas e tecnologias
-- [ ] **Scout** — Análise de dependências e gerenciadores de pacotes
-- [ ] **Scout** — Identificação de entry points, CI/CD e configurações
+- [x] **Scout** — Mapeamento de estrutura de pastas e tecnologias ✅
+- [x] **Scout** — Análise de dependências e gerenciadores de pacotes ✅
+- [x] **Scout** — Identificação de entry points, CI/CD e configurações ✅
 
 ## Decisão de organização das specs 🗂️
 
@@ -18,9 +18,17 @@
 
 ## Fase 2: Escavação 🏗️
 
-> O Reversa preenche esta seção com os módulos reais após o Scout concluir o reconhecimento.
-
-- [ ] **Arqueólogo** — Análise dos módulos identificados pelo Scout
+- [ ] **Arqueólogo** — Análise do módulo `configuracao`
+- [ ] **Arqueólogo** — Análise do módulo `dashboard`
+- [ ] **Arqueólogo** — Análise do módulo `importacao`
+- [ ] **Arqueólogo** — Análise do módulo `informes`
+- [ ] **Arqueólogo** — Análise do módulo `conferencia`
+- [ ] **Arqueólogo** — Análise do módulo `conferencia_folha`
+- [ ] **Arqueólogo** — Análise do módulo `irpf`
+- [ ] **Arqueólogo** — Análise do módulo `nomes`
+- [ ] **Arqueólogo** — Análise do módulo `ajustes_manuais`
+- [ ] **Arqueólogo** — Análise do módulo `pendencias_esocial`
+- [ ] **Arqueólogo** — Análise do módulo `excluir`
 
 ## Fase 3: Interpretação 🧠
 

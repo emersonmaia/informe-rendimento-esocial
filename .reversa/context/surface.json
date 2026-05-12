@@ -1,0 +1,88 @@
+{
+  "generated_at": "2026-05-12T00:00:00Z",
+  "project_root": "D:/agronil_informe_rendimento_com_esocial/chatgpt",
+  "languages": [
+    { "name": "Python", "extensions": [".py"], "file_count": 74 },
+    { "name": "JavaScript/JSX", "extensions": [".jsx", ".js"], "file_count": 14 },
+    { "name": "SQL", "extensions": [".sql"], "file_count": 1 }
+  ],
+  "primary_language": "Python",
+  "frameworks": [
+    { "name": "FastAPI", "version": "0.135.3", "source": "requirements_backend.txt" },
+    { "name": "Uvicorn", "version": "0.44.0", "source": "requirements_backend.txt" },
+    { "name": "React", "version": "19.2.5", "source": "frontend/package.json" },
+    { "name": "Ant Design", "version": "6.3.7", "source": "frontend/package.json" },
+    { "name": "Vite", "version": "8.0.10", "source": "frontend/package.json" },
+    { "name": "ReportLab", "version": "4.4.10", "source": "requirements_backend.txt" },
+    { "name": "pyodbc", "version": "5.2.0", "source": "requirements_backend.txt" },
+    { "name": "APScheduler", "version": "3.11.2", "source": "requirements_backend.txt" }
+  ],
+  "package_manager": "pip + npm",
+  "entry_points": [
+    { "path": "backend/main.py", "type": "server_entry" },
+    { "path": "frontend/src/main.jsx", "type": "app_entry" },
+    { "path": "frontend/index.html", "type": "html_entry" },
+    { "path": "main_importador.py", "type": "cli_legacy" }
+  ],
+  "config_files": [
+    "connections.json.example",
+    "backend/config.py",
+    "frontend/vite.config.js",
+    "frontend/eslint.config.js",
+    ".gitignore"
+  ],
+  "ci_cd": [],
+  "docker": {
+    "dockerfile": "Dockerfile",
+    "compose": "docker-compose.yml"
+  },
+  "database_hints": [
+    { "path": "criar_tabelas_esocial.sql", "type": "ddl_script" },
+    { "path": "setup_tabelas.py", "type": "setup_script" },
+    { "path": "setup_tabelas_mvr.py", "type": "setup_script" },
+    { "path": "backend/db.py", "type": "connection_manager" },
+    { "path": "connections.json.example", "type": "connection_config" }
+  ],
+  "test_framework": null,
+  "test_file_count": 0,
+  "modules": [
+    "configuracao",
+    "dashboard",
+    "importacao",
+    "informes",
+    "conferencia",
+    "conferencia_folha",
+    "irpf",
+    "nomes",
+    "ajustes_manuais",
+    "pendencias_esocial",
+    "excluir"
+  ],
+  "total_files": 161,
+  "architecture_notes": {
+    "pattern": "full-stack SPA + REST API",
+    "multi_tenant": true,
+    "tenant_strategy": "multiple SQL Server databases, switched at runtime via connections.json",
+    "async_jobs": "threading + polling (job_id pattern)",
+    "legacy_scripts": "~50 standalone Python scripts at root (diagnostics, one-off imports)",
+    "legacy_coupling": "informes_service.py and importador_service.py import from root-level scripts via sys.path manipulation"
+  },
+  "organization_suggestion": {
+    "granularity": "endpoint",
+    "rationale": "O backend usa roteamento centralizado em main.py com app.include_router() e prefixos /api/<recurso>; cada router mapeia diretamente para um endpoint funcional.",
+    "signals": [
+      {
+        "type": "centralized_routing",
+        "evidence": [
+          "backend/main.py",
+          "backend/routers/configuracao.py",
+          "backend/routers/importacao.py",
+          "backend/routers/conferencia.py",
+          "backend/routers/dashboard.py",
+          "backend/routers/informes.py"
+        ]
+      }
+    ],
+    "features": []
+  }
+}

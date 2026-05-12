@@ -8,16 +8,24 @@
   "doc_level": "completo",
   "output_folder": "_reversa_sdd",
   "forward_folder": "_reversa_forward",
-  "phase": "reconhecimento",
-  "completed": [],
+  "phase": "escavacao",
+  "completed": ["reconhecimento"],
   "pending": [
-    "reconhecimento",
     "escavacao",
     "interpretacao",
     "geracao",
     "revisao"
   ],
-  "checkpoints": {},
+  "checkpoints": {
+    "scout": {
+      "completed_at": "2026-05-12T00:00:00Z",
+      "files": [
+        "_reversa_sdd/inventory.md",
+        "_reversa_sdd/dependencies.md",
+        ".reversa/context/surface.json"
+      ]
+    }
+  },
   "engines": [
     "claude-code",
     "codex",

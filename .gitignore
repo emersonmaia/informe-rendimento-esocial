@@ -5,6 +5,32 @@ __pycache__/
 *.pyo
 .env
 
+# Python
+*.pyd
+.venv/
+
+# Node
+node_modules/
+dist/
+
+# VSCode
+.vscode/
+
+# Sistema
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Configuração sensível
+connections.json.example
+
+# Docker
+*.log
+docker-compose.override.yml
+
+# Outros
+*.sqlite3
+
 # Build (gerado pelo start_servidor.bat / setup.bat)
 frontend/dist/
 
@@ -22,7 +48,4 @@ verificar_*.py
 DADOS_SQL_IMPORT/
 
 # Editor / OS
-.vscode/
 .idea/
-Thumbs.db
-desktop.ini
